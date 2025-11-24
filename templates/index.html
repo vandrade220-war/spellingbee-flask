@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Spelling Bee 🐝</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f6f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 20px 30px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .tabuleiro {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .letra {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            background: #f9f9f9;
+        }
+
+        .letra.central {
+            background: #ffe066;
+            border-color: #cc9a00;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            flex: 1;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .mensagem {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .mensagem.sucesso {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .mensagem.erro {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .mensagem.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .info-jogo {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .palavras-encontradas {
+            margin-top: 15px;
+        }
+
+        .palavras-encontradas ul {
+            columns: 2;
+            -webkit-columns: 2;
+            -moz-columns: 2;
+        }
+
+        .botoes-secundarios {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .botoes-secundarios a {
+            margin: 0 8px;
+            text-decoration: none;
+        }
+
+        .botoes-secundarios button {
+            margin: 5px 3px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Spelling Bee 🐝</h1>
+    <p class="subtitulo">Use a letra central em todas as palavras e apenas as letras mostradas.</p>
+
+    <div class="tabuleiro">
+        {% for letra in letras %}
+            <div class="letra {% if letra == letra_central %}central{% endif %}">
+                {{ letra }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="info-jogo">
+        <div>Pontuação: <strong>{{ pontuacao }}</strong></div>
+        <div>Palavras encontradas: <strong>{{ usadas|length }}</strong> / {{ total_possiveis }}</div>
+    </div>
+
+    {% if mensagem %}
+        <div class="mensagem {{ tipo_mensagem }}">
+            {{ mensagem }}
+        </div>
+    {% endif %}
+
+    <form action="{{ url_for('tentar') }}" method="post">
+        <input type="text" name="palavra" placeholder="Digite uma palavra..." autocomplete="off">
+        <button type="submit">Enviar</button>
+    </form>
+
+    <div class="botoes-secundarios">
+        <a href="{{ url_for('novo_jogo') }}"><button type="button">Novo jogo</button></a>
+        <a href="{{ url_for('revelar') }}"><button type="button">Revelar soluções</button></a>
+    </div>
+
+    <div class="palavras-encontradas">
+        <h3>Palavras encontradas:</h3>
+        {% if usadas %}
+            <ul>
+            {% for p in usadas %}
+                <li>{{ p }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nenhuma ainda... tente algumas combinações! 😊</p>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>
