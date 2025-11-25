@@ -28,11 +28,7 @@ def carregar_palavras(caminho_arquivo: str = "palavras.txt"):
             palavras = [normalizar(l.strip()) for l in f if l.strip()]
     else:
         palavras = [
-            "abelha", "abelhas", "mel", "leme", "mesa", "sal", "sala",
-            "amem", "amas", "massa", "cassela", "casa", "casal", "lasso",
-            "alma", "elas", "selas", "salao", "mala", "amas", "lasca",
-            "casas", "salas", "mesas", "lama", "alem", "selam", "meias",
-            "salame", "lama", "amala", "salema"
+            "Cacto" "Ciclo" "Cena" "Cerca" "Capaz" "Chave" "Custo"
         ]
         palavras = [normalizar(p) for p in palavras]
 
