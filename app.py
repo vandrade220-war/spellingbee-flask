@@ -86,8 +86,8 @@ def gerar_tabuleiro(palavras, tamanho_min=4, tentativas=200):
             return letras_unicas, letra_central, solucao
 
     # fallback se não achar nada bom
-    letras_unicas = list("abelhms")
-    letra_central = "e"
+    letras_unicas = list("acehilnoprstuvz")
+    letra_central = "C"
     solucao = palavras_validas_para_tabuleiro(
         palavras, letras_unicas, letra_central, tamanho_min
     )
