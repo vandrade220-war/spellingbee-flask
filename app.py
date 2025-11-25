@@ -81,13 +81,6 @@ def gerar_tabuleiro(palavras, tamanho_min=4, tentativas=200):
         if len(solucao) >= 10:
             return letras_unicas, letra_central, solucao
 
-    # fallback se não achar nada bom
-    letras_unicas = list("acehilnoprstuvz")
-    letra_central = "C"
-    solucao = palavras_validas_para_tabuleiro(
-        palavras, letras_unicas, letra_central, tamanho_min
-    )
-    return letras_unicas, letra_central, solucao
 
 
 def pontuacao_palavra(p: str) -> int:
@@ -120,10 +113,14 @@ def index():
     tipo_mensagem = session.pop("tipo_mensagem", "info")
     total_possiveis = len(session.get("solucao", []))
 
+    # pega as 6 letras de fora (tira a central, corta em 6 no máximo)
+    outer_letras = [l for l in letras if l != letra_central][:6]
+
     return render_template(
         "index.html",
         letras=letras,
         letra_central=letra_central,
+        outer_letras=outer_letras,
         usadas=usadas,
         pontuacao=pontuacao,
         mensagem=mensagem,

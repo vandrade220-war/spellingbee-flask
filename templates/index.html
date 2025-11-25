@@ -1,182 +1,344 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Spelling Bee 🐝</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f6f6f6;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="utf-8">
+  <title>Mini Spelling Bee</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
 
-        .container {
-            max-width: 800px;
-            margin: 30px auto;
-            background: #ffffff;
-            padding: 20px 30px 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
+    .game-container {
+      background: #ffffff;
+      padding: 24px 32px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      max-width: 800px;
+      width: 100%;
+    }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 5px;
-        }
+    h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 24px;
+      text-align: center;
+    }
 
-        .subtitulo {
-            text-align: center;
-            color: #666;
-            margin-bottom: 20px;
-        }
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+    }
 
-        .tabuleiro {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+    /* Mensagens */
+    .mensagem {
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
 
-        .letra {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            text-transform: uppercase;
-            background: #f9f9f9;
-        }
+    .mensagem.info {
+      background: #e8f1ff;
+      color: #174ea6;
+    }
 
-        .letra.central {
-            background: #ffe066;
-            border-color: #cc9a00;
-        }
+    .mensagem.sucesso {
+      background: #e6f4ea;
+      color: #0f7b2b;
+    }
 
-        form {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+    .mensagem.erro {
+      background: #fce8e6;
+      color: #b3261e;
+    }
 
-        input[type="text"] {
-            padding: 8px;
-            font-size: 16px;
-            flex: 1;
-        }
+    /* Tabuleiro em forma de colmeia */
+    .board-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+    }
 
-        button {
-            padding: 8px 16px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+    .hex-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 4px 0;
+    }
 
-        .mensagem {
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
+    .hex {
+      width: 70px;
+      height: 60px;
+      border: none;
+      cursor: pointer;
+      font-size: 22px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #202124;
+      background: #e0e0e0;
+      clip-path: polygon(
+        25% 0%, 75% 0%,
+        100% 50%,
+        75% 100%, 25% 100%,
+        0% 50%
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.1s;
+    }
 
-        .mensagem.sucesso {
-            background: #d4edda;
-            color: #155724;
-        }
+    .hex:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    }
 
-        .mensagem.erro {
-            background: #f8d7da;
-            color: #721c24;
-        }
+    .hex.central {
+      background: #ffd84d;
+    }
 
-        .mensagem.info {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
+    .hex:active {
+      transform: translateY(1px) scale(0.97);
+      box-shadow: none;
+    }
 
-        .info-jogo {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: #333;
-        }
+    /* Input e botões inferiores */
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
 
-        .palavras-encontradas {
-            margin-top: 15px;
-        }
+    .type-label {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
 
-        .palavras-encontradas ul {
-            columns: 2;
-            -webkit-columns: 2;
-            -moz-columns: 2;
-        }
+    .type-input {
+      width: 260px;
+      padding: 8px 10px;
+      font-size: 18px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
 
-        .botoes-secundarios {
-            text-align: center;
-            margin-top: 10px;
-        }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 4px;
+    }
 
-        .botoes-secundarios a {
-            margin: 0 8px;
-            text-decoration: none;
-        }
+    .btn {
+      border-radius: 999px;
+      border: 1px solid #ccc;
+      background: #ffffff;
+      padding: 6px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      min-width: 86px;
+      transition: background 0.1s, box-shadow 0.1s, transform 0.08s;
+    }
 
-        .botoes-secundarios button {
-            margin: 5px 3px;
-        }
-    </style>
+    .btn:hover {
+      background: #f3f3f3;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .btn.primary {
+      background: #202124;
+      color: #ffffff;
+      border-color: #202124;
+    }
+
+    .btn.small {
+      padding: 4px 10px;
+      font-size: 12px;
+      min-width: 0;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .status-box {
+      font-size: 13px;
+      color: #444;
+    }
+
+    .status-box span {
+      font-weight: 600;
+    }
+
+    .used-words {
+      margin-top: 16px;
+      font-size: 13px;
+      max-height: 150px;
+      overflow-y: auto;
+      border-top: 1px solid #eee;
+      padding-top: 8px;
+    }
+
+    .used-words-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .used-words-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .used-words-list li {
+      background: #f1f3f4;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-    <h1>Spelling Bee 🐝</h1>
-    <p class="subtitulo">Use a letra central em todas as palavras e apenas as letras mostradas~, esse jogo foi feito com amor para Isadora Longhi.</p>
+<div class="game-container">
+  <h1>Spelling Bee</h1>
+  <div class="subtitle">
+    Use apenas as letras do tabuleiro e inclua sempre a letra central.
+  </div>
 
-    <div class="tabuleiro">
-        {% for letra in letras %}
-            <div class="letra {% if letra == letra_central %}central{% endif %}">
-                {{ letra }}
-            </div>
+  {% if mensagem %}
+    <div class="mensagem {{ tipo_mensagem }}">
+      {{ mensagem }}
+    </div>
+  {% endif %}
+
+  <div class="board-wrapper">
+    <!-- Colmeia de letras -->
+    <div class="hex-row">
+      {% if outer_letras|length > 0 %}
+        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[0] }}')">
+          {{ outer_letras[0] }}
+        </button>
+      {% endif %}
+      {% if outer_letras|length > 1 %}
+        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[1] }}')">
+          {{ outer_letras[1] }}
+        </button>
+      {% endif %}
+    </div>
+
+    <div class="hex-row">
+      {% if outer_letras|length > 2 %}
+        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[2] }}')">
+          {{ outer_letras[2] }}
+        </button>
+      {% endif %}
+
+      <button type="button" class="hex central" onclick="addLetter('{{ letra_central }}')">
+        {{ letra_central }}
+      </button>
+
+      {% if outer_letras|length > 3 %}
+        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[3] }}')">
+          {{ outer_letras[3] }}
+        </button>
+      {% endif %}
+    </div>
+
+    <div class="hex-row">
+      {% if outer_letras|length > 4 %}
+        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[4] }}')">
+          {{ outer_letras[4] }}
+        </button>
+      {% endif %}
+      {% if outer_letras|length > 5 %}
+        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[5] }}')">
+          {{ outer_letras[5] }}
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Formulário -->
+  <form action="{{ url_for('tentar') }}" method="post">
+    <div class="input-wrapper">
+      <div class="type-label">Type or click</div>
+      <input
+        id="palavra-input"
+        name="palavra"
+        type="text"
+        class="type-input"
+        autocomplete="off"
+      >
+
+      <div class="btn-row">
+        <button type="button" class="btn" onclick="deleteLetter()">Delete</button>
+        <button type="submit" class="btn primary">Enter</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="footer-actions">
+    <div>
+      <a href="{{ url_for('novo_jogo') }}" class="btn small">Novo jogo</a>
+      <a href="{{ url_for('revelar') }}" class="btn small">Revelar soluções</a>
+    </div>
+
+    <div class="status-box">
+      Pontuação: <span>{{ pontuacao }}</span> ·
+      Palavras encontradas: <span>{{ usadas|length }}</span> /
+      <span>{{ total_possiveis }}</span>
+    </div>
+  </div>
+
+  {% if usadas %}
+    <div class="used-words">
+      <div class="used-words-title">Palavras usadas:</div>
+      <ul class="used-words-list">
+        {% for w in usadas %}
+          <li>{{ w }}</li>
         {% endfor %}
+      </ul>
     </div>
-
-    <div class="info-jogo">
-        <div>Pontuação: <strong>{{ pontuacao }}</strong></div>
-        <div>Palavras encontradas: <strong>{{ usadas|length }}</strong> / {{ total_possiveis }}</div>
-    </div>
-
-    {% if mensagem %}
-        <div class="mensagem {{ tipo_mensagem }}">
-            {{ mensagem }}
-        </div>
-    {% endif %}
-
-    <form action="{{ url_for('tentar') }}" method="post">
-        <input type="text" name="palavra" placeholder="Digite uma palavra..." autocomplete="off">
-        <button type="submit">Enviar</button>
-    </form>
-
-    <div class="botoes-secundarios">
-        <a href="{{ url_for('novo_jogo') }}"><button type="button">Novo jogo</button></a>
-        <a href="{{ url_for('revelar') }}"><button type="button">Revelar soluções</button></a>
-    </div>
-
-    <div class="palavras-encontradas">
-        <h3>Palavras encontradas:</h3>
-        {% if usadas %}
-            <ul>
-            {% for p in usadas %}
-                <li>{{ p }}</li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p>Nenhuma ainda... tente algumas combinações! 😊</p>
-        {% endif %}
-    </div>
+  {% endif %}
 </div>
+
+<script>
+  function addLetter(letter) {
+    const input = document.getElementById("palavra-input");
+    input.value += letter;
+    input.focus();
+  }
+
+  function deleteLetter() {
+    const input = document.getElementById("palavra-input");
+    input.value = input.value.slice(0, -1);
+    input.focus();
+  }
+</script>
 </body>
 </html>

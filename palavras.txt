@@ -1,7 +1,10 @@
-Cacto
-Ciclo
-Cena
-Cerca
-Capaz
-Chave
-Custo
+cacto
+carga
+cerca
+cegar
+ciclo
+coroa
+custo
+cenico
+cangote
+criar
