@@ -28,7 +28,7 @@ def carregar_palavras(caminho_arquivo: str = "palavras.txt"):
             palavras = [normalizar(l.strip()) for l in f if l.strip()]
     else:
         palavras = [
-            "Cacto" "Ciclo" "Cena" "Cerca" "Capaz" "Chave" "Custo"
+            "Cacto", "Ciclo", "Cena", "Cerca", "Capaz", "Chave", "Custo"
         ]
         palavras = [normalizar(p) for p in palavras]
 
