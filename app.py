@@ -2,10 +2,15 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import random
 import unicodedata
 import os
+import logging
+from datetime import timedelta
 
 app = Flask(__name__)
 app.secret_key = "amor"  # necessário para usar sessão
 
+# Configurações de sessão
+app.config['SESSION_PERMANENT'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # Definindo o tempo de expiração
 
 # --------------------------------------------
 # Utilitários
@@ -82,7 +87,6 @@ def gerar_tabuleiro(palavras, tamanho_min=4, tentativas=200):
             return letras_unicas, letra_central, solucao
 
 
-
 def pontuacao_palavra(p: str) -> int:
     """Regras simples de pontuação."""
     if len(p) == 4:
@@ -101,10 +105,10 @@ def pontuacao_palavra(p: str) -> int:
 
 @app.route("/")
 def index():
-    # Verificar se a chave 'letras' está na sessão
+    # Verifica se 'letras' está presente na sessão, senão chama a função iniciar_novo_jogo
     if "letras" not in session:
-        iniciar_novo_jogo()  # Inicializa os dados da sessão se não estiverem presentes
-    
+        iniciar_novo_jogo()  # Inicializa os dados da sessão
+
     letras = session["letras"]
     letra_central = session["letra_central"]
     usadas = session.get("usadas", [])
@@ -113,7 +117,7 @@ def index():
     tipo_mensagem = session.pop("tipo_mensagem", "info")
     total_possiveis = len(session.get("solucao", []))
 
-    # pega as 6 letras de fora (tira a central, corta em 6 no máximo)
+    # Pega as 6 letras de fora (tira a central, corta em 6 no máximo)
     outer_letras = [l for l in letras if l != letra_central][:6]
 
     return render_template(
@@ -134,9 +138,9 @@ def iniciar_novo_jogo():
     resultado = gerar_tabuleiro(palavras)
     
     if resultado is None:
-        # Se não encontrou uma solução válida, podemos retornar um erro ou tentar novamente
         session["mensagem"] = "Não foi possível gerar um tabuleiro válido. Tente novamente."
         session["tipo_mensagem"] = "erro"
+        logging.error("Não foi possível gerar um tabuleiro válido após várias tentativas.")
         return redirect(url_for("index"))
     
     letras, letra_central, solucao = resultado
@@ -145,6 +149,7 @@ def iniciar_novo_jogo():
     session["solucao"] = solucao
     session["usadas"] = []
     session["pontuacao"] = 0
+    logging.info(f"Novo jogo iniciado: letras={letras}, letra central={letra_central}")
 
 
 @app.route("/novo")
