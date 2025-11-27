@@ -131,8 +131,15 @@ def index():
 
 def iniciar_novo_jogo():
     palavras = carregar_palavras()
-    letras, letra_central, solucao = gerar_tabuleiro(palavras)
-
+    resultado = gerar_tabuleiro(palavras)
+    
+    if resultado is None:
+        # Se não encontrou uma solução válida, podemos retornar um erro ou tentar novamente
+        session["mensagem"] = "Não foi possível gerar um tabuleiro válido. Tente novamente."
+        session["tipo_mensagem"] = "erro"
+        return redirect(url_for("index"))
+    
+    letras, letra_central, solucao = resultado
     session["letras"] = letras
     session["letra_central"] = letra_central
     session["solucao"] = solucao
