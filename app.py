@@ -101,10 +101,10 @@ def pontuacao_palavra(p: str) -> int:
 
 @app.route("/")
 def index():
-    # Se não houver jogo na sessão, cria um
+    # Verificar se a chave 'letras' está na sessão
     if "letras" not in session:
-        iniciar_novo_jogo()
-
+        iniciar_novo_jogo()  # Inicializa os dados da sessão se não estiverem presentes
+    
     letras = session["letras"]
     letra_central = session["letra_central"]
     usadas = session.get("usadas", [])
