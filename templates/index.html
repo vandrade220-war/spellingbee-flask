@@ -1,344 +1,56 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="utf-8">
   <title>Mini Spelling Bee</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f7f7f7;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      min-height: 100vh;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .game-container {
-      background: #ffffff;
-      padding: 24px 32px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      max-width: 800px;
-      width: 100%;
-    }
-
-    h1 {
-      margin-top: 0;
-      margin-bottom: 8px;
-      font-size: 24px;
-      text-align: center;
-    }
-
-    .subtitle {
-      text-align: center;
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 20px;
-    }
-
-    /* Mensagens */
-    .mensagem {
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 14px;
-    }
-
-    .mensagem.info {
-      background: #e8f1ff;
-      color: #174ea6;
-    }
-
-    .mensagem.sucesso {
-      background: #e6f4ea;
-      color: #0f7b2b;
-    }
-
-    .mensagem.erro {
-      background: #fce8e6;
-      color: #b3261e;
-    }
-
-    /* Tabuleiro em forma de colmeia */
-    .board-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .hex-row {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin: 4px 0;
-    }
-
-    .hex {
-      width: 70px;
-      height: 60px;
-      border: none;
-      cursor: pointer;
-      font-size: 22px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: #202124;
-      background: #e0e0e0;
-      clip-path: polygon(
-        25% 0%, 75% 0%,
-        100% 50%,
-        75% 100%, 25% 100%,
-        0% 50%
-      );
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.1s;
-    }
-
-    .hex:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
-    }
-
-    .hex.central {
-      background: #ffd84d;
-    }
-
-    .hex:active {
-      transform: translateY(1px) scale(0.97);
-      box-shadow: none;
-    }
-
-    /* Input e botões inferiores */
-    .input-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .type-label {
-      font-size: 18px;
-      margin-bottom: 4px;
-    }
-
-    .type-input {
-      width: 260px;
-      padding: 8px 10px;
-      font-size: 18px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 4px;
-    }
-
-    .btn {
-      border-radius: 999px;
-      border: 1px solid #ccc;
-      background: #ffffff;
-      padding: 6px 16px;
-      font-size: 14px;
-      cursor: pointer;
-      min-width: 86px;
-      transition: background 0.1s, box-shadow 0.1s, transform 0.08s;
-    }
-
-    .btn:hover {
-      background: #f3f3f3;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-    }
-
-    .btn:active {
-      transform: translateY(1px);
-      box-shadow: none;
-    }
-
-    .btn.primary {
-      background: #202124;
-      color: #ffffff;
-      border-color: #202124;
-    }
-
-    .btn.small {
-      padding: 4px 10px;
-      font-size: 12px;
-      min-width: 0;
-    }
-
-    .footer-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 12px;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .status-box {
-      font-size: 13px;
-      color: #444;
-    }
-
-    .status-box span {
-      font-weight: 600;
-    }
-
-    .used-words {
-      margin-top: 16px;
-      font-size: 13px;
-      max-height: 150px;
-      overflow-y: auto;
-      border-top: 1px solid #eee;
-      padding-top: 8px;
-    }
-
-    .used-words-title {
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .used-words-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 10px;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .used-words-list li {
-      background: #f1f3f4;
-      padding: 2px 8px;
-      border-radius: 999px;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<div class="game-container">
-  <h1>Spelling Bee</h1>
-  <div class="subtitle">
-    Use apenas as letras do tabuleiro e inclua sempre a letra central.
+  <div class="container">
+    <h1>Type or click</h1>
+
+    <form id="wordForm">
+      <input id="wordInput" type="text" autocomplete="off"
+             placeholder="Digite aqui ou clique nas letras">
+    </form>
+
+    <div id="honeycomb">
+      <!-- linha de cima -->
+      <div class="empty"></div>
+      <button class="hex outer" data-letter="{{ outer_letters[0] }}">{{ outer_letters[0]|upper }}</button>
+      <div class="empty"></div>
+
+      <!-- linha do meio -->
+      <button class="hex outer" data-letter="{{ outer_letters[1] }}">{{ outer_letters[1]|upper }}</button>
+      <button class="hex center" data-letter="{{ center }}">{{ center|upper }}</button>
+      <button class="hex outer" data-letter="{{ outer_letters[2] }}">{{ outer_letters[2]|upper }}</button>
+
+      <!-- linha de baixo -->
+      <button class="hex outer" data-letter="{{ outer_letters[3] }}">{{ outer_letters[3]|upper }}</button>
+      <button class="hex outer" data-letter="{{ outer_letters[4] }}">{{ outer_letters[4]|upper }}</button>
+      <button class="hex outer" data-letter="{{ outer_letters[5] }}">{{ outer_letters[5]|upper }}</button>
+    </div>
+
+    <div class="controls">
+      <button id="deleteBtn" type="button">Delete</button>
+      <button id="shuffleBtn" type="button">↻</button>
+      <button id="enterBtn" type="button">Enter</button>
+    </div>
+
+    <div class="status">
+      <p>Pontuação: <span id="score">{{ score }}</span></p>
+      <p>Rating: <span id="rating">{{ rating }}</span></p>
+      <p id="message"></p>
+    </div>
+
+    <h2>Palavras encontradas</h2>
+    <ul id="foundList">
+      {% for w in session.get('found', []) %}
+        <li>{{ w }}</li>
+      {% endfor %}
+    </ul>
   </div>
 
-  {% if mensagem %}
-    <div class="mensagem {{ tipo_mensagem }}">
-      {{ mensagem }}
-    </div>
-  {% endif %}
-
-  <div class="board-wrapper">
-    <!-- Colmeia de letras -->
-    <div class="hex-row">
-      {% if outer_letras|length > 0 %}
-        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[0] }}')">
-          {{ outer_letras[0] }}
-        </button>
-      {% endif %}
-      {% if outer_letras|length > 1 %}
-        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[1] }}')">
-          {{ outer_letras[1] }}
-        </button>
-      {% endif %}
-    </div>
-
-    <div class="hex-row">
-      {% if outer_letras|length > 2 %}
-        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[2] }}')">
-          {{ outer_letras[2] }}
-        </button>
-      {% endif %}
-
-      <button type="button" class="hex central" onclick="addLetter('{{ letra_central }}')">
-        {{ letra_central }}
-      </button>
-
-      {% if outer_letras|length > 3 %}
-        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[3] }}')">
-          {{ outer_letras[3] }}
-        </button>
-      {% endif %}
-    </div>
-
-    <div class="hex-row">
-      {% if outer_letras|length > 4 %}
-        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[4] }}')">
-          {{ outer_letras[4] }}
-        </button>
-      {% endif %}
-      {% if outer_letras|length > 5 %}
-        <button type="button" class="hex" onclick="addLetter('{{ outer_letras[5] }}')">
-          {{ outer_letras[5] }}
-        </button>
-      {% endif %}
-    </div>
-  </div>
-
-  <!-- Formulário -->
-  <form action="{{ url_for('tentar') }}" method="post">
-    <div class="input-wrapper">
-      <div class="type-label">Type or click</div>
-      <input
-        id="palavra-input"
-        name="palavra"
-        type="text"
-        class="type-input"
-        autocomplete="off"
-      >
-
-      <div class="btn-row">
-        <button type="button" class="btn" onclick="deleteLetter()">Delete</button>
-        <button type="submit" class="btn primary">Enter</button>
-      </div>
-    </div>
-  </form>
-
-  <div class="footer-actions">
-    <div>
-      <a href="{{ url_for('novo_jogo') }}" class="btn small">Novo jogo</a>
-      <a href="{{ url_for('revelar') }}" class="btn small">Revelar soluções</a>
-    </div>
-
-    <div class="status-box">
-      Pontuação: <span>{{ pontuacao }}</span> ·
-      Palavras encontradas: <span>{{ usadas|length }}</span> /
-      <span>{{ total_possiveis }}</span>
-    </div>
-  </div>
-
-  {% if usadas %}
-    <div class="used-words">
-      <div class="used-words-title">Palavras usadas:</div>
-      <ul class="used-words-list">
-        {% for w in usadas %}
-          <li>{{ w }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
-</div>
-
-<script>
-  function addLetter(letter) {
-    const input = document.getElementById("palavra-input");
-    input.value += letter;
-    input.focus();
-  }
-
-  function deleteLetter() {
-    const input = document.getElementById("palavra-input");
-    input.value = input.value.slice(0, -1);
-    input.focus();
-  }
-</script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
